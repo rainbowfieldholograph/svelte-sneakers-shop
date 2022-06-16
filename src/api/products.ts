@@ -1,9 +1,9 @@
 import { products } from '../mockData/products';
 
 export const getAllProducts = () => {
-  return products;
+	return products;
 };
 
 export const getProductById = (id: number) => {
-  return products.find((product) => product.id === id);
+	return products.find((product) => product.id === id);
 };
