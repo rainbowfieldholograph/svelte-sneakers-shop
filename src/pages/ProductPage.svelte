@@ -7,12 +7,17 @@
 	$: $params;
 
 	const product = getProductById(+$params.id);
+	const headTitle = product ? `${product.brandTitle}: ${product.title}` : 'Not Found';
 
 	const onClickBuyButton = () => {
 		if (!product) return;
 		addCartItem(product.id);
 	};
 </script>
+
+<svelte:head>
+	<title>{headTitle}</title>
+</svelte:head>
 
 <div class="wrapper">
 	{#if product}

@@ -4,6 +4,10 @@
 	const products = getCartItems();
 </script>
 
+<svelte:head>
+	<title>Cart</title>
+</svelte:head>
+
 <div>
 	<h1>Cart ({products?.length ?? 0})</h1>
 	{#if !products}
