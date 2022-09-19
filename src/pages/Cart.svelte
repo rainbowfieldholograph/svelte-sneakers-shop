@@ -2,7 +2,6 @@
 	import ProductCard from '../components/ProductCard.svelte';
 	import { getCartItems } from '../storage/adapters/cart';
 	const products = getCartItems();
-	console.log(products);
 </script>
 
 <div>
