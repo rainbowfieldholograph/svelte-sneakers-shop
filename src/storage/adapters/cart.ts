@@ -1,25 +1,48 @@
 import { getProductById } from '../../api/products';
-import type { Product } from '../../mockData/products.d';
 import { storageWrapper } from '../storage';
 
-const CART_ITEMS_KEY = 'cart_items';
+interface CartItem {
+	id: number;
+	count: number;
+}
 
-export const getCartItems = (): Product[] | null => {
-	const cartItems: number[] | undefined = storageWrapper.get(CART_ITEMS_KEY);
-	if (!cartItems) return null;
-	const cartProducts: Product[] = [];
-	for (const item of cartItems) {
-		const candidate = getProductById(item);
-		if (candidate) cartProducts.push(candidate);
+const STORAGE_ITEMS_KEY = 'cart_items';
+
+const set = (newValue: CartItem[]) => {
+	storageWrapper.set(STORAGE_ITEMS_KEY, newValue);
+};
+
+const get = () => {
+	return storageWrapper.get<CartItem[]>(STORAGE_ITEMS_KEY);
+};
+
+export const getCartItems = () => {
+	const cartItemIds = get();
+	const cartProducts = [];
+
+	if (!cartItemIds) return null;
+
+	for (const { id, count } of cartItemIds) {
+		const candidate = getProductById(id);
+
+		if (candidate) cartProducts.push({ ...candidate, count });
 	}
+
 	return cartProducts;
 };
 
 export const addCartItem = (productId: number) => {
-	const existingIds = storageWrapper.get(CART_ITEMS_KEY);
-	if (Array.isArray(existingIds)) {
-		storageWrapper.set(CART_ITEMS_KEY, [...existingIds, productId]);
-		return;
-	}
-	storageWrapper.set(CART_ITEMS_KEY, [productId]);
+	const cartItems = get();
+	const newItem = { id: productId, count: 0 };
+
+	if (!Array.isArray(cartItems)) return set([newItem]);
+
+	const itemIndex = cartItems.findIndex(({ id }) => id === productId);
+
+	if (itemIndex === -1) return set([...cartItems, newItem]);
+
+	const { id, count } = cartItems[itemIndex];
+	cartItems[itemIndex] = { id, count: count + 1 };
+
+	set(cartItems);
 };
